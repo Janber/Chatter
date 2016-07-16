@@ -7,6 +7,7 @@
 //
 
 #import "AddressTableViewController.h"
+#import "ChatViewController.h"
 #import "EaseMob.h"
 
 @interface AddressTableViewController ()<EMChatManagerDelegate>
@@ -138,5 +139,21 @@
         [[EaseMob sharedInstance].chatManager removeBuddy:deleteUsername removeFromRemote:YES error:nil];
     }
 }
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    // 往聊天控制器 传递一个 buddy的值
+    id destVC = segue.destinationViewController;
+    if ([destVC isKindOfClass:[ChatViewController class]]) {
+        //获取点击的行
+        NSInteger selectRow = [self.tableView indexPathForSelectedRow].row;
+        
+        ChatViewController * chatVc = destVC;
+        chatVc.buddy = self.buddyList[selectRow];
+        
+    }
+    
+    
+}
+
 
 @end
