@@ -9,48 +9,19 @@
 #import "ChatViewController.h"
 #import "ChatReceiveTableViewCell.h"
 
-@interface ChatViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface ChatViewController ()<UITableViewDataSource>
 
 
 /** 输入工具条底部的约束**/
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *inputViewButtonConstraint;
 
-@property (nonatomic, strong) NSMutableArray *dataSources;
-
-@property (nonatomic, strong) ChatReceiveTableViewCell *chatCellTool;
-
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-
 @end
 
 @implementation ChatViewController
 
-- (NSMutableArray *)dataSources{
-    
-    if (! _dataSources) {
-        _dataSources = [NSMutableArray array];
-    }
-    return _dataSources;
-    
-}
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    [self.dataSources addObject:@"xxxxxxxxxxxxxxxxxxxxxxxxx"];
-    [self.dataSources addObject:@"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"];
-    [self.dataSources addObject:@"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"];
-    [self.dataSources addObject:@"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"];
-    
-    
-    self.chatCellTool = [self.tableView dequeueReusableCellWithIdentifier:ReceiverCell];
-    
-    
-    
-    
-    
     //1.监听键盘弹出，把inputToolbar(输入工具条)往上移
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(kbWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
@@ -93,37 +64,14 @@
 
 #pragma mark 表格数据源
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.dataSources.count;
+    return 20;
 }
-
-
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-    self.chatCellTool.messageLabel.text = self.dataSources[indexPath.row];
-    
-    
-    return [self.chatCellTool cellHeight];
-}
-
-
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-    ChatReceiveTableViewCell *cell = nil;
-
-    
-    if (indexPath.row % 2 == 0 ) { // senderCell
-        
-        cell = [tableView dequeueReusableCellWithIdentifier:SenderCell];
-        
-    } else {  // receieverCell
-        
-        cell = [tableView dequeueReusableCellWithIdentifier:ReceiverCell];
-        
-    }
-    
+    static NSString *ID = @"ReceiverCell";
+    ChatReceiveTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
     //显示内容
-    cell.messageLabel.text = self.dataSources[indexPath.row];
+    cell.messageLabel.text = @"发生的范德萨发zadsdsfdgvdfvfdvvdfvdfb";
     return cell;
 }
 
