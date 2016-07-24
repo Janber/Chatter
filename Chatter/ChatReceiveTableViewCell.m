@@ -9,9 +9,25 @@
 #import "ChatReceiveTableViewCell.h"
 #import "EMCDDeviceManager.h"
 #import "AudioPlayTool.h"
+#import "UIImageView+WebCache.h"
 
+@interface ChatReceiveTableViewCell()
+/** 聊天图片控件 */
+@property(nonatomic, strong)UIImageView * chatImgView;
+
+@end
 
 @implementation ChatReceiveTableViewCell
+
+-(UIImageView *)chatImgView{
+    if (!_chatImgView) {
+        _chatImgView = [[UIImageView alloc] init];
+    }
+    return _chatImgView;
+}
+
+
+
 
 
 -(void)awakeFromNib{
@@ -41,6 +57,10 @@
 
 -(void)setMessage:(EMMessage *)message{
     
+    //重用时，把聊天图片控件删除
+    [self.chatImgView removeFromSuperview];
+    
+    
     _message = message;
     
     // 获取消息体
@@ -52,12 +72,54 @@
     }else if ([body isKindOfClass:[EMVoiceMessageBody class]]){
 //        self.messageLabel.text = @ "voice";
         self.messageLabel.attributedText = [self voiceAtt];
-  
+        
+    }else if([body isKindOfClass:[EMImageMessageBody class]]){
+        [self showImage];
         
     }else{
         self.messageLabel.text = @"未知的类型";
     }
     
+}
+
+
+-(void)showImage{
+   
+    //获取图片消息体
+    EMImageMessageBody *imgBody = self.message.messageBodies[0];
+    CGRect thumbnailFrm =(CGRect){0,0,imgBody.thumbnailSize};
+
+    
+    // 设置Label的尺寸足够显示UIImageView
+    NSTextAttachment *imgAttach = [[NSTextAttachment alloc] init];
+    imgAttach.bounds =thumbnailFrm;
+    NSAttributedString *imgAtt  = [NSAttributedString attributedStringWithAttachment:imgAttach];
+    self.messageLabel.attributedText =imgAtt;
+    
+    //1.cell里添加一个UIImageView
+  //  UIImageView *chatImgView = [[UIImageView alloc] init];
+    [self.messageLabel addSubview:self.chatImgView];
+  //  chatImgView.backgroundColor = [UIColor redColor];
+    
+    //2.设置图片控件为缩略图的尺寸
+     self.chatImgView.frame = thumbnailFrm;
+    
+    //3.下载图片
+    NSLog(@"thumbnailLocalPath%@",imgBody.thumbnailLocalPath);
+    NSLog(@"thumbnailRemotePath%@",imgBody.thumbnailRemotePath);
+    
+    NSFileManager *manager = [NSFileManager defaultManager];
+    //如果本地的图片存在，直接从本地显示
+    UIImage *palceImg = [UIImage imageNamed:@"imageDownloading"];
+    
+    if ([manager fileExistsAtPath:imgBody.thumbnailLocalPath]) {
+        
+        [self.chatImgView sd_setImageWithURL:[NSURL fileURLWithPath:imgBody.thumbnailLocalPath] placeholderImage:palceImg];
+        
+    }else{
+        //如果本地的图片存在，直接从网络显示
+        [self.chatImgView sd_setImageWithURL:[NSURL URLWithString:imgBody.thumbnailRemotePath] placeholderImage:palceImg];
+    }
 }
 
 

@@ -72,4 +72,16 @@ static UIImageView * animatingImageView; // 正在执行动画的ImageView
     
 }
 
+
++(void)stop{
+    //停止播放语音
+    [[EMCDDeviceManager sharedInstance]stopPlaying];
+    //移除动画
+    [animatingImageView stopAnimating];
+    [animatingImageView removeFromSuperview];
+    
+}
+
+
+
 @end

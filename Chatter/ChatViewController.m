@@ -9,9 +9,13 @@
 #import "ChatViewController.h"
 #import "ChatReceiveTableViewCell.h"
 #import "EMCDDeviceManager.h"
+#import "AudioPlayTool.h"
+#import "TimeCell.h"
+#import "TimeTool.h"
 
 
-@interface ChatViewController ()<UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,EMChatManagerDelegate>
+@interface ChatViewController ()<UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,EMChatManagerDelegate,
+UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 
@@ -28,6 +32,11 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *inputToolBarHeightConstraint;
 
 @property (weak, nonatomic) IBOutlet UIButton *recordBtn;
+
+
+/** 当前添加的时间 */
+@property (nonatomic, copy) NSString *currentTimeStr;
+
 @end
 
 @implementation ChatViewController
@@ -44,7 +53,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-   
+    
+    //设置背景颜色
+    self.tableView.backgroundColor = [UIColor colorWithRed:246/255.0 green:246/255.0 blue:246/255.0 alpha:1];
+    
     // 给计算高度的cell工具对象 赋值
     self.chatCellTool = [self.tableView dequeueReusableCellWithIdentifier:ReceiverCell];
     
@@ -67,6 +79,9 @@
 }
 
 -(void)loadLocalChatRecords{
+    //假设在数组的第一位置添加时间
+    //[self.dataSources addObject:@"16:06"];
+    
     // 要获取本地用户会话
     EMConversation * conversation = [[EaseMob sharedInstance].chatManager conversationForChatter:self.buddy.username conversationType:eConversationTypeChat];
     
@@ -76,7 +91,10 @@
     
     
     // 添加到数据源
-    [self.dataSources addObjectsFromArray:messages];
+ //   [self.dataSources addObjectsFromArray:messages];
+    for (EMMessage *msgObj in messages) {
+        [self addDateSourcesWithMessage:msgObj];
+    }
     
 }
 
@@ -125,6 +143,15 @@
 
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    // 时间cell的高度是固定
+    if ([self.dataSources[indexPath.row] isKindOfClass:[NSString class]]) {
+        
+        return 15;
+    }
+
+    
+    
+    
     
     // 获取消息模型
     EMMessage *msg = self.dataSources[indexPath.row];
@@ -139,6 +166,13 @@
 
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    //判断数据源类型
+    if ([self.dataSources[indexPath.row] isKindOfClass:[NSString class]]) { //显示时间cell
+        TimeCell *timeCell = [tableView dequeueReusableCellWithIdentifier:@"TimeCell"];
+        timeCell.timeLabel.text = self.dataSources[indexPath.row];
+        return timeCell;
+    }
     
     // 获取消息模型
     EMMessage * message = self.dataSources[indexPath.row];
@@ -221,26 +255,7 @@
     // 创建一个文本消息体
     EMTextMessageBody * textBody = [[EMTextMessageBody alloc] initWithChatObject:chatText];
     
-    // 创建一个消息对象
-    EMMessage * msgObj = [[EMMessage alloc] initWithReceiver:self.buddy.username bodies:@[textBody]];
-    
-    //消息类型
-    msgObj.messageType = eMessageTypeChat;
-    
-    // 发送消息
-    [[EaseMob sharedInstance].chatManager asyncSendMessage:msgObj progress:nil prepare:^(EMMessage *message, EMError *error) {
-        NSLog(@"准备发送消息");
-    } onQueue:nil completion:^(EMMessage *message, EMError *error) {
-        NSLog(@"完成发送消息 %@",error);
-    } onQueue:nil];
-    
-    
-    // 把刚发的消息添加都数据源，并刷新表格
-    [self.dataSources addObject:msgObj];
-    [self.tableView reloadData];
-    
-    // 把刚发送的消息显示在最上面
-    [self scrollToBottom];
+    [self sendMessageBase:textBody];
     
 }
 
@@ -255,35 +270,44 @@
     
     voiceBody.duration = duration;
     
-    //2.构造一个消息对象
-    EMMessage *msgObj = [[EMMessage alloc] initWithReceiver:self.buddy.username bodies:@[voiceBody]];
-        //设置聊天的类型 单聊
+    [self sendMessageBase:voiceBody];
+    
+}
+
+#pragma mark 发送图片
+-(void)sendImg:(UIImage *)selectedImg{
+    //1.构造图片消息体
+    /*
+     * 第一个参数：原始大小的图片对象
+     * 第二个参数：缩略图的图片对象
+     */
+    EMChatImage *orginalChatImg = [[EMChatImage alloc] initWithUIImage:selectedImg displayName:@"图片"];
+    
+    EMImageMessageBody *imgBody = [[EMImageMessageBody alloc] initWithImage:orginalChatImg thumbnailImage:nil];
+    
+    [self sendMessageBase:imgBody];
+
+}
+
+
+-(void)sendMessageBase:(id<IEMMessageBody>)body{
+    //1.构造消息对象
+    EMMessage *msgObj = [[EMMessage alloc] initWithReceiver:self.buddy.username bodies:@[body]];
     msgObj.messageType = eMessageTypeChat;
     
-    //3.发送
+    //2.发送消息
     [[EaseMob sharedInstance].chatManager asyncSendMessage:msgObj progress:nil prepare:^(EMMessage *message, EMError *error) {
-        
-        NSLog(@"准备发送语音");
-        
+        NSLog(@"准备发送");
     } onQueue:nil completion:^(EMMessage *message, EMError *error) {
-        
-        if (!error) {
-            NSLog(@"语音发送成功");
-        }else{
-            NSLog(@"语音发送失败");
-        }
-        
+        NSLog(@"发送成功 %@",error);
     } onQueue:nil];
     
-    
-    
     // 把刚发的消息添加都数据源，并刷新表格
-    [self.dataSources addObject:msgObj];
+    [self addDateSourcesWithMessage:msgObj];
     [self.tableView reloadData];
     
     // 把刚发送的消息显示在最上面
     [self scrollToBottom];
-
     
 }
 
@@ -330,6 +354,7 @@
     
     //1.显示录音按钮
     self.recordBtn.hidden = !self.recordBtn.hidden;
+    self.textView.hidden = !self.textView.hidden;
     
     if (self.recordBtn.hidden == NO ) { //录音按钮显示
         
@@ -359,7 +384,7 @@
     
     [[EMCDDeviceManager sharedInstance] asyncStartRecordingWithFileName:filename completion:^(NSError *error) {
         if (!error) {
-            NSLog(@"开始录音成功");
+            NSLog(@"开始录音");
         }
         
     }];
@@ -391,5 +416,48 @@
     
 }
 
+- (IBAction)showImgPicker:(id)sender {
+    //显示图片选择的控制器
+    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+    
+    //设置源
+    imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imgPicker.delegate = self;
+    
+    [self presentViewController:imgPicker animated:YES completion:NULL];
+    
+}
+
+/*用户选择图片后的回调*/
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
+    //1.获取用户选中的图片
+    UIImage *selectedImg = info[UIImagePickerControllerOriginalImage];
+    
+    //2.发送图片
+    [self sendImg:selectedImg];
+    
+    //3.隐藏当前图片选择控制器
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    
+}
+
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    //停止语音播放
+    [AudioPlayTool stop];
+    
+}
+
+-(void)addDateSourcesWithMessage:(EMMessage *) msg{
+    // 1.判断EMMessage对象前面是否要加“时间”
+    NSString *timeStr = [TimeTool timeStr:msg.timestamp];
+    if (![self.currentTimeStr isEqualToString:timeStr]) {
+        [self.dataSources addObject:timeStr];
+        self.currentTimeStr = timeStr;
+    }
+    
+    // 2.再添加EMMessage对象
+    [self.dataSources addObject:msg];
+    
+}
 
 @end
