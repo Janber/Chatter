@@ -123,6 +123,9 @@
                                             <constraint firstAttribute="height" constant="30" id="cMf-wV-krP"/>
                                         </constraints>
                                         <state key="normal" image="chatBar_record"/>
+                                        <connections>
+                                            <action selector="voiceAction:" destination="h3F-Cg-5sH" eventType="touchUpInside" id="veU-GH-cy3"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wl6-OL-NtF" userLabel="more">
                                         <rect key="frame" x="562" y="8" width="30" height="30"/>
@@ -132,9 +135,12 @@
                                         </constraints>
                                         <state key="normal" image="chatBar_more"/>
                                     </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chatBar_textBg" translatesAutoresizingMaskIntoConstraints="NO" id="BaO-bs-SKt" userLabel="textViewBg">
+                                        <rect key="frame" x="46" y="7" width="470" height="33"/>
+                                        <rect key="contentStretch" x="0.5" y="0.5" width="0.0" height="0.0"/>
+                                    </imageView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="XeY-hh-qgt">
                                         <rect key="frame" x="46" y="7" width="470" height="33"/>
-                                        <color key="backgroundColor" red="1" green="0.35340880930000002" blue="0.52824736250000004" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="send"/>
                                         <connections>
@@ -149,20 +155,43 @@
                                         </constraints>
                                         <state key="normal" image="chatBar_face"/>
                                     </button>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XNk-mD-dDI" userLabel="recordBtn">
+                                        <rect key="frame" x="46" y="8" width="470" height="31"/>
+                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="31" id="zVj-lW-kAJ"/>
+                                        </constraints>
+                                        <state key="normal" title="按住说话">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" title="松开发送"/>
+                                        <connections>
+                                            <action selector="beginRecordAction:" destination="h3F-Cg-5sH" eventType="touchDown" id="KEq-SS-jOq"/>
+                                            <action selector="cancelRecordAction:" destination="h3F-Cg-5sH" eventType="touchUpOutside" id="9kt-Fi-BIw"/>
+                                            <action selector="endRecordAction:" destination="h3F-Cg-5sH" eventType="touchUpInside" id="XKJ-ai-L3B"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="46" id="4po-uC-ZhX"/>
                                     <constraint firstItem="XeY-hh-qgt" firstAttribute="leading" secondItem="vzd-xY-ewu" secondAttribute="trailing" constant="8" id="BBG-ah-CRE"/>
                                     <constraint firstItem="jan-wS-1Jr" firstAttribute="leading" secondItem="XeY-hh-qgt" secondAttribute="trailing" constant="8" id="ECx-9N-ppc"/>
+                                    <constraint firstItem="jan-wS-1Jr" firstAttribute="leading" secondItem="BaO-bs-SKt" secondAttribute="trailing" constant="8" id="EYb-IV-Rnq"/>
                                     <constraint firstItem="XeY-hh-qgt" firstAttribute="top" secondItem="053-3T-QXq" secondAttribute="top" constant="7" id="I9e-rV-cMd"/>
                                     <constraint firstItem="vzd-xY-ewu" firstAttribute="leading" secondItem="053-3T-QXq" secondAttribute="leading" constant="8" id="IrI-Ia-gTm"/>
+                                    <constraint firstItem="BaO-bs-SKt" firstAttribute="leading" secondItem="vzd-xY-ewu" secondAttribute="trailing" constant="8" id="YIK-Dd-SNL"/>
                                     <constraint firstAttribute="bottom" secondItem="XeY-hh-qgt" secondAttribute="bottom" constant="6" id="ZEb-oO-JdR"/>
                                     <constraint firstAttribute="bottom" secondItem="jan-wS-1Jr" secondAttribute="bottom" constant="8" id="aCq-QZ-RK8"/>
                                     <constraint firstAttribute="bottom" secondItem="Wl6-OL-NtF" secondAttribute="bottom" constant="8" id="aVP-Ih-Whx"/>
+                                    <constraint firstAttribute="bottom" secondItem="XNk-mD-dDI" secondAttribute="bottom" constant="7" id="bj2-LB-7f4"/>
                                     <constraint firstAttribute="trailing" secondItem="Wl6-OL-NtF" secondAttribute="trailing" constant="8" id="gqK-md-ZE1"/>
+                                    <constraint firstItem="XNk-mD-dDI" firstAttribute="leading" secondItem="vzd-xY-ewu" secondAttribute="trailing" constant="8" id="h4P-zC-qEa"/>
                                     <constraint firstItem="Wl6-OL-NtF" firstAttribute="leading" secondItem="jan-wS-1Jr" secondAttribute="trailing" constant="8" id="lZ6-zP-Oip"/>
+                                    <constraint firstItem="BaO-bs-SKt" firstAttribute="top" secondItem="053-3T-QXq" secondAttribute="top" constant="7" id="lrz-MO-79Q"/>
                                     <constraint firstAttribute="bottom" secondItem="vzd-xY-ewu" secondAttribute="bottom" constant="8" id="sDA-8o-Qlb"/>
+                                    <constraint firstAttribute="bottom" secondItem="BaO-bs-SKt" secondAttribute="bottom" constant="6" id="sEl-Wo-buX"/>
+                                    <constraint firstItem="jan-wS-1Jr" firstAttribute="leading" secondItem="XNk-mD-dDI" secondAttribute="trailing" constant="8" id="ucC-Fi-31p"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="aIp-GZ-Q9W">
@@ -187,7 +216,7 @@
                                                     <rect key="frame" x="46" y="2" width="67" height="41"/>
                                                     <rect key="contentStretch" x="0.5" y="0.69999999999999996" width="0.0" height="0.0"/>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="250" translatesAutoresizingMaskIntoConstraints="NO" id="Ehv-XF-U5h">
+                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="250" translatesAutoresizingMaskIntoConstraints="NO" id="Ehv-XF-U5h">
                                                     <rect key="frame" x="61" y="12" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -228,7 +257,7 @@
                                                     <rect key="frame" x="488" y="5" width="67" height="41"/>
                                                     <rect key="contentStretch" x="0.5" y="0.69999999999999996" width="0.0" height="0.0"/>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="242" translatesAutoresizingMaskIntoConstraints="NO" id="mJ9-gw-lsk">
+                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="242" translatesAutoresizingMaskIntoConstraints="NO" id="mJ9-gw-lsk">
                                                     <rect key="frame" x="498" y="15" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -272,8 +301,11 @@
                     <navigationItem key="navigationItem" title="聊天界面" id="ZPQ-C9-Nfm"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="inputToolBarHeightConstraint" destination="4po-uC-ZhX" id="t9o-TU-8dM"/>
                         <outlet property="inputViewButtonConstraint" destination="NzI-ke-ZSv" id="3qt-Jh-jdP"/>
+                        <outlet property="recordBtn" destination="XNk-mD-dDI" id="kzw-hb-1QT"/>
                         <outlet property="tableView" destination="aIp-GZ-Q9W" id="6g0-ei-PML"/>
+                        <outlet property="textView" destination="XeY-hh-qgt" id="4MJ-E7-BHu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dj1-28-EiQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -426,6 +458,7 @@
         <image name="chatBar_face" width="30" height="30"/>
         <image name="chatBar_more" width="30" height="30"/>
         <image name="chatBar_record" width="30" height="30"/>
+        <image name="chatBar_textBg" width="30" height="30"/>
         <image name="chatListCellHead" width="51" height="51"/>
         <image name="chat_receiver_bg" width="40" height="40"/>
         <image name="chat_sender_bg" width="40" height="40"/>
