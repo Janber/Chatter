@@ -335,7 +335,7 @@ UIImagePickerControllerDelegate,UINavigationControllerDelegate>
     
 
     //1.把接收的消息添加到数据源
-    [self.dataSources addObject:message];
+    [self addDateSourcesWithMessage:message];
     
     //2.刷新表格
     [self.tableView reloadData];
